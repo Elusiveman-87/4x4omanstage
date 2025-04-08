@@ -84,30 +84,25 @@
   <script>
     async function generatePost() {
       const category = document.getElementById('category').value;
-      const prompt = `اكتب منشورًا تسويقيًا مميزًا باللغة العربية عن نشاط تجاري من نوع: ${category}`;
 
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": """Authorization": "Bearer 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"
+      try {
+        const response = await fetch("http://192.168.193.129:5000/generate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ category })
+        });
 
-        },
-        body: JSON.stringify({
-          model: "gpt-4",
-          messages: [
-            { role: "system", content: "أنت مساعد تسويق ذكي باللغة العربية." },
-            { role: "user", content: prompt }
-          ],
-          temperature: 0.8
-        })
-      });
-
-      const data = await response.json();
-      const generatedText = data.choices?.[0]?.message?.content || "حدث خطأ أثناء توليد المنشور.";
-
-      document.getElementById('generatedText').innerText = generatedText;
-      document.getElementById('postOutput').style.display = 'block';
+        const data = await response.json();
+        const generatedText = data.text || "حدث خطأ أثناء توليد المنشور.";
+        document.getElementById('generatedText').innerText = generatedText;
+        document.getElementById('postOutput').style.display = 'block';
+      } catch (error) {
+        console.error("خطأ في الاتصال بالسيرفر:", error);
+        document.getElementById('generatedText').innerText = "حدث خطأ أثناء الاتصال بالسيرفر.";
+        document.getElementById('postOutput').style.display = 'block';
+      }
     }
   </script>
 </body>
