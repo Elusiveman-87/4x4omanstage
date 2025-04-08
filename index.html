@@ -82,28 +82,28 @@
   </div>
 
   <script>
-    async function generatePost() {
-      const category = document.getElementById('category').value;
+  async function generatePost() {
+    const category = document.getElementById('category').value;
 
-      try {
-        const response = await fetch("http://192.168.193.129:5000/generate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ category })
-        });
+    const response = await fetch("http://192.168.193.129:5000/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ category: category })
+    });
 
-        const data = await response.json();
-        const generatedText = data.text || "حدث خطأ أثناء توليد المنشور.";
-        document.getElementById('generatedText').innerText = generatedText;
-        document.getElementById('postOutput').style.display = 'block';
-      } catch (error) {
-        console.error("خطأ في الاتصال بالسيرفر:", error);
-        document.getElementById('generatedText').innerText = "حدث خطأ أثناء الاتصال بالسيرفر.";
-        document.getElementById('postOutput').style.display = 'block';
-      }
+    const data = await response.json();
+
+    if (data.text) {
+      document.getElementById('generatedText').innerText = data.text;
+    } else {
+      document.getElementById('generatedText').innerText = "❌ حدث خطأ: " + (data.error || "غير معروف");
     }
-  </script>
+
+    document.getElementById('postOutput').style.display = 'block';
+  }
+</script>
+
 </body>
 </html>
