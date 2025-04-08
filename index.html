@@ -82,11 +82,30 @@
   </div>
 
   <script>
-    function generatePost() {
+    async function generatePost() {
       const category = document.getElementById('category').value;
-      const postText = `مرحبًا! إليك منشور إبداعي لنشاطك (${category}):\n\n` +
-        `نحن في ${category} نؤمن بأن التميز يصنع الفارق. تابعنا لتكتشف العروض واللمسات الخاصة التي نُقدمها كل يوم!`;
-      document.getElementById('generatedText').innerText = postText;
+      const prompt = `اكتب منشورًا تسويقيًا مميزًا باللغة العربية عن نشاط تجاري من نوع: ${category}`;
+
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "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"
+        },
+        body: JSON.stringify({
+          model: "gpt-4",
+          messages: [
+            { role: "system", content: "أنت مساعد تسويق ذكي باللغة العربية." },
+            { role: "user", content: prompt }
+          ],
+          temperature: 0.8
+        })
+      });
+
+      const data = await response.json();
+      const generatedText = data.choices?.[0]?.message?.content || "حدث خطأ أثناء توليد المنشور.";
+
+      document.getElementById('generatedText').innerText = generatedText;
       document.getElementById('postOutput').style.display = 'block';
     }
   </script>
